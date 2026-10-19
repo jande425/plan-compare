@@ -1,0 +1,283 @@
+{
+  "checked": "2026-10-19",
+  "note": "Specs are taken from the documents listed for each system. 'confidence' says where a figure came from: datasheet (manufacturer document), installer (stated in an installer quote), assumed (a modelling assumption). Always confirm the exact model codes are on the Clean Energy Council approved list - that is required for the federal battery rebate. AC round-trip efficiency is assumed at 90% for all systems unless stated.",
+  "systems": [
+    {
+      "id": "foxess-kh10-cq7",
+      "brand": "FoxESS",
+      "name": "KH10 + CQ7 (50 A)",
+      "inverter": "FoxESS KH10 single-phase hybrid, 10 kW (10.5 kVA max)",
+      "module": "CQ7-50 LFP module, 6.96 kWh usable (100% DoD)",
+      "module_kwh": 6.96,
+      "modules": {
+        "min": 2,
+        "max": 7,
+        "label": "CQ7-L{n}"
+      },
+      "per_module_kw": 2.88,
+      "inverter_charge_kw": 10,
+      "inverter_discharge_kw": 10,
+      "rte": 0.9,
+      "backup": "EPS output 10 kVA (12 kW for 60 s), ~20 ms switchover; circuits wired to the backup board only",
+      "pv": "4 MPPT, 16 A per input, max 15 kW PV input / 20 kWp array, 80-500 V MPPT, 600 V max",
+      "warranty": {
+        "years": 12,
+        "retention": 0.7,
+        "throughput_mwh_per_kwh": 5.0824,
+        "text": "70% capacity for 12 years or 5.08 MWh per usable kWh (212 MWh for L6), whichever first; must be registered at commissioning"
+      },
+      "notes": [
+        "Battery power = 50 A x stack voltage (57.6 V per module): L2 5.8 kW, L3 8.6 kW, L4+ limited by the 10 kW inverter.",
+        "Max 7 modules on a KH is inferred from the KH's 480 V battery input limit - confirm with FoxESS."
+      ],
+      "confidence": {
+        "module_kwh": "datasheet",
+        "power": "datasheet",
+        "warranty": "datasheet",
+        "modules.max": "assumed",
+        "rte": "assumed"
+      },
+      "sources": [
+        {
+          "date": "2025-05-09",
+          "title": "FoxESS KH series datasheet v1.5"
+        },
+        {
+          "date": "2026-03-28",
+          "title": "FoxESS Australia battery warranty policy v2.7"
+        },
+        {
+          "date": "2026-05-14",
+          "title": "FoxESS CQ7-50 datasheet AU v1.2"
+        }
+      ]
+    },
+    {
+      "id": "goodwe-esa-9",
+      "brand": "GoodWe",
+      "name": "ESA 10 kW + GW9.0 modules",
+      "inverter": "GoodWe ESA GW9.999K-EHA-G20 all-in-one, 9.999 kW single phase",
+      "module": "GW9.0-BAT-D-G20, 8.85 kWh usable",
+      "module_kwh": 8.85,
+      "modules": {
+        "min": 2,
+        "max": 6,
+        "label": "{n} x GW9.0"
+      },
+      "per_module_kw": 4.5,
+      "inverter_charge_kw": 13.5,
+      "inverter_discharge_kw": 9.999,
+      "rte": 0.9,
+      "backup": "Built-in backup port 10 kVA, <4 ms switchover",
+      "pv": "4 MPPT, 20 A per input, up to 20 kW of panels, 40-560 V MPPT",
+      "warranty": {
+        "years": 10,
+        "retention": 0.7,
+        "throughput_mwh_per_kwh": null,
+        "text": "10-year battery warranty (retention/throughput: check GoodWe's document)"
+      },
+      "notes": [
+        "GoodWe's ESA page lists 35.6 A charge / 29 A discharge continuous battery current and 9,999 VA grid and backup output.",
+        "Charge up to 13.5 kW (DC, from solar), discharge 11 kW battery / 9.999 kW AC. Each module handles 4.5 kW.",
+        "Battery stack with the inverter is 1.6-1.9 m tall; check AS/NZS 5139 clearances."
+      ],
+      "confidence": {
+        "module_kwh": "installer",
+        "power": "manufacturer page / installer",
+        "warranty": "installer",
+        "modules.max": "installer",
+        "rte": "assumed"
+      },
+      "sources": [
+        {
+          "date": "2026-10",
+          "title": "Installer quotation specification summaries (South East Queensland)"
+        },
+        {
+          "date": "2026-10-19",
+          "title": "GoodWe Australia ESA series product page"
+        }
+      ]
+    },
+    {
+      "id": "goodwe-esa-8",
+      "brand": "GoodWe",
+      "name": "ESA 10 kW + GW8.3 modules",
+      "inverter": "GoodWe ESA GW9.999K-EHA-G20 all-in-one, 9.999 kW single phase",
+      "module": "GW8.3-BAT-D-G20, ~7.99 kWh usable",
+      "module_kwh": 7.99,
+      "modules": {
+        "min": 2,
+        "max": 6,
+        "label": "{n} x GW8.3"
+      },
+      "per_module_kw": 4.0,
+      "inverter_charge_kw": 13.5,
+      "inverter_discharge_kw": 9.999,
+      "rte": 0.9,
+      "backup": "Built-in backup port 10 kVA, <4 ms switchover",
+      "pv": "4 MPPT, 20 A per input, up to 20 kW of panels",
+      "warranty": {
+        "years": 10,
+        "retention": 0.7,
+        "throughput_mwh_per_kwh": null,
+        "text": "10-year battery warranty"
+      },
+      "notes": [
+        "Usable kWh from an installer quote (4 modules = 31.95 kWh). Per-module power is an assumption."
+      ],
+      "confidence": {
+        "module_kwh": "installer",
+        "power": "assumed",
+        "warranty": "installer",
+        "modules.max": "assumed",
+        "rte": "assumed"
+      },
+      "sources": [
+        {
+          "date": "2026-10",
+          "title": "Installer quotation specification summaries (South East Queensland)"
+        }
+      ]
+    },
+    {
+      "id": "sigenergy-ec10",
+      "brand": "Sigenergy",
+      "name": "SigenStor EC 10.0 SP + BAT 10.0",
+      "inverter": "Sigenergy SigenStor EC 10.0 SP AU, 9.999 kW single phase",
+      "module": "SigenStor BAT 10.0 (9.04 kWh nominal), 8.76 kWh usable",
+      "module_kwh": 8.76,
+      "modules": {
+        "min": 1,
+        "max": 6,
+        "label": "{n} x BAT 10.0"
+      },
+      "per_module_kw": 4.6,
+      "inverter_charge_kw": 10,
+      "inverter_discharge_kw": 10,
+      "rte": 0.9,
+      "backup": "Needs the Sigen Gateway (0 ms) - check it is included; without it there is no backup",
+      "pv": "4 MPPT, 16 A per input, up to 20 kW of panels, 50-550 V MPPT",
+      "warranty": {
+        "years": 10,
+        "retention": 0.7,
+        "throughput_mwh_per_kwh": null,
+        "text": "10 years, >=70% or throughput limit (check Sigenergy's document)"
+      },
+      "notes": [
+        "Installer quotes often show nominal capacity (5 x 9.04 = 45.2 kWh); usable is 8.76 kWh per module (5 = 43.8 kWh).",
+        "Each module is rated 4.6 kW continuous (6.9 kW for 10 s), so 1 module limits the battery to 4.6 kW.",
+        "ACCC recall (Nov 2025) of EC 10.0 SP AU units with quick-connect AC plugs: make sure the updated unit is supplied.",
+        "Battery warranty reportedly starts once the system is connected to the Sigen cloud."
+      ],
+      "confidence": {
+        "module_kwh": "datasheet (EU) / retailer",
+        "power": "datasheet (EU) / retailer",
+        "warranty": "retailer",
+        "modules.max": "retailer",
+        "rte": "assumed"
+      },
+      "sources": [
+        {
+          "date": "2025-11-19",
+          "title": "ACCC product safety recall notice"
+        },
+        {
+          "date": "2026-10-19",
+          "title": "Retailer listings (Solarproof, Energrosso, Tradesparky)"
+        },
+        {
+          "date": "n/d",
+          "title": "SigenStor BAT 6.0/10.0 datasheet (EU excerpt)"
+        }
+      ]
+    },
+    {
+      "id": "sungrow-sh10rs-sbh",
+      "brand": "Sungrow",
+      "name": "SH10RS + SBH",
+      "inverter": "Sungrow SH10RS single-phase hybrid, 9.999 kW",
+      "module": "SBH battery module, 5.0 kWh usable (SBH100 = 2 modules ... SBH400 = 8)",
+      "module_kwh": 5.0,
+      "modules": {
+        "min": 2,
+        "max": 8,
+        "label": "SBH{x50}"
+      },
+      "per_module_kw": null,
+      "inverter_charge_kw": 10,
+      "inverter_discharge_kw": 10,
+      "rte": 0.9,
+      "backup": "Built-in 63 A bypass for whole-house backup, <10 ms",
+      "pv": "4 MPPT, 16 A per input, up to 20 kW of panels, 40-560 V MPPT, 600 V max",
+      "warranty": {
+        "years": 10,
+        "retention": 0.7,
+        "throughput_mwh_per_kwh": null,
+        "text": "10-year warranty"
+      },
+      "notes": [
+        "SBH100-400: 5 kWh usable per module, 50 A continuous, 100% DoD (settable).",
+        "Check compatibility: the SBH400 operates at ~475-642 V, while the SH10RS AU datasheet (V2, 2023) lists a 80-460 V battery input. Ask the installer for Sungrow's compatibility confirmation for the exact inverter version."
+      ],
+      "confidence": {
+        "module_kwh": "datasheet",
+        "power": "datasheet",
+        "warranty": "retailer",
+        "modules.max": "datasheet",
+        "rte": "assumed"
+      },
+      "sources": [
+        {
+          "date": "2023",
+          "title": "Sungrow SH8.0/10RS AU datasheet V2"
+        },
+        {
+          "date": "n/d",
+          "title": "Sungrow SBH100-400 user manual / datasheet table"
+        }
+      ]
+    },
+    {
+      "id": "tesla-pw3",
+      "brand": "Tesla",
+      "name": "Powerwall 3 + Expansion",
+      "inverter": "Tesla Powerwall 3 (built-in inverter, 5 / 10 / 11.04 kW AC)",
+      "module": "Powerwall 3 or Expansion unit, 13.5 kWh usable",
+      "module_kwh": 13.5,
+      "modules": {
+        "min": 1,
+        "max": 4,
+        "label": "PW3 + {m} expansion"
+      },
+      "per_module_kw": null,
+      "inverter_charge_kw": 5,
+      "inverter_discharge_kw": 11.04,
+      "rte": 0.9,
+      "backup": "Needs Backup Gateway 2 for whole-home backup",
+      "pv": "3 MPPT, up to 20 kW of panels, 60-480 V MPPT",
+      "warranty": {
+        "years": 10,
+        "retention": 0.7,
+        "throughput_mwh_per_kwh": null,
+        "text": "10 years, 70%"
+      },
+      "notes": [
+        "Charging is limited to 5 kW when expansion units are added (higher rate promised by future firmware). Export control is via Tesla's automatic modes, not a user-set schedule."
+      ],
+      "confidence": {
+        "module_kwh": "datasheet",
+        "power": "datasheet",
+        "warranty": "datasheet",
+        "modules.max": "datasheet",
+        "rte": "assumed"
+      },
+      "sources": [
+        {
+          "date": "2025",
+          "title": "Tesla Powerwall 3 AU datasheet"
+        }
+      ]
+    }
+  ]
+}

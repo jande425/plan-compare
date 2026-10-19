@@ -1,0 +1,21 @@
+{
+  "description": "Annual changes in South East Queensland residential electricity prices used to build 10-year ranges.",
+  "sources": [
+    "AER Default Market Offer final determinations, Energex residential flat rate without controlled load, 4,600 kWh, incl. GST (2019-20 to 2026-27)",
+    "ABS CPI electricity index (8 capitals), September quarter to September quarter, for 2016-17 to 2018-19 before the DMO existed"
+  ],
+  "checked": "2026-10-17",
+  "dmo_energex_aud": {"2019-20": 1570, "2020-21": 1508, "2021-22": 1455, "2022-23": 1620, "2023-24": 1969, "2024-25": 2052, "2025-26": 2143, "2026-27": 1988},
+  "annual_changes": [
+    {"year": "2016-17", "change": 0.1139, "source": "ABS CPI electricity"},
+    {"year": "2017-18", "change": 0.0190, "source": "ABS CPI electricity"},
+    {"year": "2018-19", "change": -0.0214, "source": "ABS CPI electricity"},
+    {"year": "2020-21", "change": -0.0395, "source": "AER DMO Energex"},
+    {"year": "2021-22", "change": -0.0351, "source": "AER DMO Energex"},
+    {"year": "2022-23", "change": 0.1134, "source": "AER DMO Energex"},
+    {"year": "2023-24", "change": 0.2154, "source": "AER DMO Energex"},
+    {"year": "2024-25", "change": 0.0422, "source": "AER DMO Energex"},
+    {"year": "2025-26", "change": 0.0443, "source": "AER DMO Energex"},
+    {"year": "2026-27", "change": -0.0723, "source": "AER DMO Energex"}
+  ]
+}

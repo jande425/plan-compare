@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Plan Compare</title>
+  <meta name="description" content="Compare every South East Queensland electricity plan against your own meter data, with a 10-year cost range. Your data never leaves your device.">
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <h1>Plan Compare <span class="tag">draft</span></h1>
+      <p class="lede">Every electricity plan in South East Queensland, priced on <strong>your</strong> half-hourly meter data, with a 10-year cost range from real price history.</p>
+      <p class="privacy">🔒 Your file is read in your browser. Nothing is uploaded or stored.</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="card" id="step-upload">
+      <h2>1. Your usage</h2>
+      <label class="pc">Postcode
+        <input id="postcode" inputmode="numeric" maxlength="4" placeholder="e.g. 4000">
+        <span id="pc-note" class="hint"></span>
+      </label>
+      <div class="tabs" role="tablist">
+        <button class="tab active" data-tab="tab-file" role="tab">Smart-meter file</button>
+        <button class="tab" data-tab="tab-bills" role="tab">From my bills</button>
+      </div>
+      <div id="tab-file">
+        <p>Upload a smart-meter file (<strong>NEM12</strong> CSV from your distributor or retailer portal), or a CSV with
+          timestamp, import, export and controlled-load columns. This gives the most accurate result.</p>
+        <div class="row">
+          <label class="file"><input type="file" id="file" accept=".csv,.txt"><span>Choose file…</span></label>
+          <button id="sample" class="secondary">Try sample household</button>
+        </div>
+        <p class="hint">Energex customers can download NEM12 data from their retailer's account portal or request it from Energex. A full year gives the fairest comparison.</p>
+      </div>
+      <div id="tab-bills" hidden>
+        <p>Enter the kWh from each bill (the usage table on the bill). Use the time-of-use split if your bill shows it,
+          otherwise the total. More bills, ideally a year, give a better result.</p>
+        <div class="table-wrap">
+          <table class="bills"><thead><tr>
+            <th>From</th><th>To</th><th>Peak 4–9 pm</th><th>Off-peak 9 am–4 pm</th><th>Shoulder / other</th>
+            <th>or Total</th><th>Controlled load</th><th>Solar exported</th><th></th></tr></thead>
+            <tbody id="bill-rows"></tbody></table>
+        </div>
+        <div class="row">
+          <button id="add-bill" class="secondary">Add a bill</button>
+          <button id="use-bills">Use these bills</button>
+        </div>
+        <p class="hint">Estimated from bill totals: usage within each time band follows a typical South East Queensland
+          household, and solar exports follow the actual weather for your postcode on those dates. Tested against a real
+          household's meter data: the cheapest 10 plans were the same, with a median cost error under $1 over six months.
+          Plans with <b>demand charges</b> are less reliable from bills, because short spikes in use aren't visible.</p>
+      </div>
+      <p id="usage-error" class="error" hidden></p>
+    </section>
+
+    <section class="card" id="step-summary" hidden>
+      <h2>Your usage</h2>
+      <div class="stats" id="stats"></div>
+      <div class="chart-box short"><canvas id="profile"></canvas></div>
+      <p id="partial" class="warn" hidden></p>
+    </section>
+
+    <section class="card" id="step-options" hidden>
+      <h2>2. Options</h2>
+      <div class="grid">
+        <label>Controlled load (hot water / pool)
+          <select id="cl">
+            <option value="none">None</option>
+            <option value="cl33">Tariff 33 (Economy, ~18 h/day)</option>
+            <option value="cl31">Tariff 31 (Super Economy, overnight)</option>
+          </select>
+        </label>
+        <label>Feed-in rates over 10 years
+          <select id="fitdecline">
+            <option value="0">Stay the same</option>
+            <option value="0.05">Fall 5% a year</option>
+            <option value="0.1">Fall 10% a year</option>
+          </select>
+        </label>
+        <label>Your current plan (optional)
+          <input id="current" list="plan-list" placeholder="Start typing a retailer or plan…">
+          <datalist id="plan-list"></datalist>
+        </label>
+        <label class="check"><input type="checkbox" id="wholesale"> Include wholesale / variable-price plans (estimates)</label>
+        <label class="check"><input type="checkbox" id="restricted"> Include plans with special eligibility (seniors, members, existing customers…)</label>
+        <label class="check"><input type="checkbox" id="clmissing"> Include plans that don't publish a rate for your controlled load (a reference rate is used)</label>
+      </div>
+    </section>
+
+    <section class="card" id="step-upgrade" hidden>
+      <h2>3. Add solar and/or a battery (optional)</h2>
+      <div class="grid">
+        <fieldset>
+          <legend>Your existing solar (optional)</legend>
+          <label>Existing panels (kW) <input id="ex-kw" type="number" min="0" step="0.01" placeholder="e.g. 6.6"></label>
+          <label>Facing
+            <select id="ex-dir">
+              <option value="north">North</option><option value="north-east">North-east</option><option value="north-west">North-west</option>
+              <option value="east">East</option><option value="west">West</option><option value="flat">Flat</option>
+            </select>
+          </label>
+          <label class="file small"><input type="file" id="gen-file" accept=".csv,.txt"><span>Inverter generation CSV…</span></label>
+          <p class="hint" id="gen-note">Optional: a generation export from your inverter app (e.g. Fronius Solar.web, SolarEdge, Enphase) for the same dates.
+            It calibrates the solar model to your roof and estimates solar your inverter threw away at the export limit, which a battery could store.</p>
+        </fieldset>
+        <fieldset>
+          <legend>Extra solar panels</legend>
+          <label>Extra panels (kW)
+            <input id="pv-kw" type="number" min="0" max="30" step="0.1" value="0">
+          </label>
+          <label>Roof direction
+            <select id="pv-dir">
+              <option value="north">North (20°)</option><option value="north-east">North-east (20°)</option>
+              <option value="north-west">North-west (20°)</option><option value="east">East (20°)</option>
+              <option value="west">West (20°)</option><option value="flat">Flat (5°)</option>
+            </select>
+          </label>
+          <p class="hint" id="pv-note"></p>
+        </fieldset>
+        <fieldset>
+          <legend>Battery</legend>
+          <label>System
+            <select id="bat-sys"><option value="">No battery</option></select>
+          </label>
+          <label id="bat-mod-wrap">Size
+            <select id="bat-mod"></select>
+          </label>
+          <div id="bat-custom" class="grid tight" hidden>
+            <label>Usable kWh <input id="c-kwh" type="number" step="0.1" value="40"></label>
+            <label>Charge kW <input id="c-ch" type="number" step="0.1" value="10"></label>
+            <label>Discharge kW <input id="c-dis" type="number" step="0.1" value="10"></label>
+            <label>Round-trip % <input id="c-rte" type="number" step="1" value="90"></label>
+          </div>
+          <div id="bat-spec" class="spec"></div>
+        </fieldset>
+        <fieldset>
+          <legend>Settings &amp; price</legend>
+          <label>Export limit (kW)
+            <input id="exp-lim" type="number" min="0" max="15" step="0.5" value="5">
+          </label>
+          <label>Battery exports to the grid
+            <select id="bat-exp">
+              <option value="unlimited">Allowed (keeps an overnight reserve)</option>
+              <option value="10">Up to 10 kWh a day</option>
+              <option value="none">Never (self-use only)</option>
+            </select>
+          </label>
+          <label>Price you were quoted, after rebate ($)
+            <input id="price" type="number" min="0" step="50" placeholder="e.g. 9500">
+          </label>
+          <p class="hint" id="rebate-note"></p>
+        </fieldset>
+      </div>
+      <div class="row">
+        <button id="run-upgrade">Calculate with upgrade</button>
+        <button id="clear-upgrade" class="secondary" hidden>Remove upgrade</button>
+        <span id="progress" class="hint"></span>
+      </div>
+      <p class="hint">The battery is simulated half-hour by half-hour for every plan, trying self-use, solar export and
+        cheap-rate grid charging and keeping the cheapest, then again at its year-10 capacity (2% capacity loss a year) for the
+        10-year figures. Same-day foresight, so a real battery will do a little worse.
+        Solar above your export limit isn't visible in meter data, so charging may be understated for homes that already
+        hit that limit.</p>
+    </section>
+
+    <section class="card" id="step-results" hidden>
+      <h2>4. Results</h2>
+      <p id="results-note" class="hint"></p>
+      <div class="chart-box"><canvas id="tenyear"></canvas></div>
+      <div class="table-wrap">
+        <table id="results">
+          <thead><tr>
+            <th>#</th><th>Retailer &amp; plan</th><th class="num">Year 1 now</th><th class="num up">With upgrade</th>
+            <th class="num up">Payback</th><th class="num up">10-yr saving after price</th><th class="num m-hide">vs current</th><th class="num">10 years (likely range)</th><th class="m-hide">Notes</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <button id="more" class="secondary">Show all plans</button>
+      <div id="detail" class="detail" hidden></div>
+    </section>
+
+    <section class="card fine">
+      <h2>How this works</h2>
+      <ul>
+        <li><strong>Plans:</strong> every current residential offer published under the Consumer Data Right for the area
+          (<span id="data-meta">loading…</span>). Prices include GST; guaranteed discounts are applied, pay-on-time and other
+          conditional discounts are not.</li>
+        <li><strong>Year 1:</strong> your half-hours priced with each plan's own rates, time windows, daily caps, feed-in
+          tiers, controlled load and demand charges. Less than a year of data is scaled up, which can favour or penalise
+          seasonal plans.</li>
+        <li><strong>10-year range:</strong> charges are escalated by randomly re-sampling the last 10 years of South East
+          Queensland price changes (−7% to +22% a year); the range shows the middle 80% of 2,000 runs. It is not a prediction.</li>
+        <li><strong>Batteries:</strong> specs come from manufacturer documents where available; each spec is labelled with its
+          source. Check the exact model is on the Clean Energy Council approved list before relying on the rebate.</li>
+        <li>Estimates only, not advice. Check eligibility and the retailer's fact sheet before switching.</li>
+        <li><strong>Data:</strong> plan data from the Australian Energy Regulator's Energy Product Reference Data (Consumer Data
+          Right); weather data by <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a>
+          (CC BY 4.0, based on Copernicus ERA5); postcode locations from
+          <a href="https://github.com/matthewproctor/australianpostcodes" target="_blank" rel="noopener">Matthew Proctor's
+          Australian Postcodes</a> (CC BY 4.0); price history from AER Default Market Offer determinations and the ABS CPI.</li>
+      </ul>
+    </section>
+  </main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

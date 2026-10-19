@@ -1,0 +1,7 @@
+# Cached raw plan downloads (rebuilt by tools/fetch_plans.py)
+tools/cache/
+__pycache__/
+# Never commit anyone's real meter data
+*.nem12
+*usage*.csv
+!site/data/sample-usage.csv
