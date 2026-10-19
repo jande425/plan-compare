@@ -61,3 +61,8 @@ python tools/build_postcodes.py --fetch-solar     # postcode -> suburbs + solar 
 2. Ergon (regional QLD) and other states: network tariffs, postcode sets and testing.
 3. Battery degradation and replacement in the 10-year view.
 4. Check the CDR / Energy Made Easy data terms before any public or commercial launch, and add plain-English disclaimers.
+
+## Licence
+
+Code: MIT (see `LICENSE`). Data in `site/data/` keeps its source terms: AER Consumer Data Right plan data,
+Open-Meteo weather data (CC BY 4.0) and Matthew Proctor's australianpostcodes (CC BY 4.0).

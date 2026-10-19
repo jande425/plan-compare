@@ -29,7 +29,8 @@ def main():
         for r in csv.DictReader(f):
             if r['postcode'] in wanted and r['state'] == 'QLD' and r['lat'] and r['long']:
                 try:
-                    rows[r['postcode']].append((r['locality'].title(), float(r['lat']), float(r['long'])))
+                    name = r['locality'].replace('’', "'").replace('‘', "'").title()
+                    rows[r['postcode']].append((name, float(r['lat']), float(r['long'])))
                 except ValueError:
                     pass
     out, cells = {}, {}
@@ -37,6 +38,10 @@ def main():
         loc = rows.get(pc)
         if not loc:
             continue
+        # median position, ignoring localities more than 1 degree away (the source has a few mislabelled ones)
+        med = lambda v: sorted(v)[len(v) // 2]
+        mlat, mlon = med([x[1] for x in loc]), med([x[2] for x in loc])
+        loc = [x for x in loc if abs(x[1] - mlat) <= 1 and abs(x[2] - mlon) <= 1 and '�' not in x[0]] or loc
         lat = sum(x[1] for x in loc) / len(loc)
         lon = sum(x[2] for x in loc) / len(loc)
         cid, la, lo = cell_id(lat, lon)
